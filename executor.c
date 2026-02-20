@@ -17,24 +17,43 @@
 int execute_command(char *command, char **args) {
     pid_t pid;
     int status;
+    /* Create a new process */
+    pid = fork();
 
-    // TODO 1: Fork a child process
-    // Use fork() to create a new process
-    // Store the return value in 'pid'
-    // Check if fork failed (pid < 0) and return -1 if so
+    if (pid < 0) {
+        /* fork failed: check for system resource issues */
+        perror("System Error: fork failed");
+        return -1;
+    }
 
-    // TODO 2: Child process - Execute the command
-    // Check if we're in the child process (pid == 0)
-    // Call execvp(command, args) to transform into the target program
-    // If execvp returns, it failed - print error and exit(1)
-    // CRITICAL: Child must call exit(1), NOT return!
+    if (pid == 0) {
+        /* CHILD PROCESS CONTEXT:
+         * Attempt to transform this process into the target command.
+         * execvp() searches the PATH for the executable.
+         */
+        if (execvp(command, args) == -1) {
+            /* If execvp returns, the command could not be executed */
+            perror("Execution Error");
+            
+            /* Critical: Exit with failure status. We use exit() because 
+             * return would send the child back into the main shell loop. */
+            exit(1);
+        }
+    } else {
+        /* PARENT PROCESS CONTEXT:
+         * Block execution until the specific child process finishes.
+         */
+        if (waitpid(pid, &status, 0) == -1) {
+            perror("System Error: waitpid failed");
+            return -1;
+        }
 
+        /* Verify that the child exited normally and return its exit code */
+        if (WIFEXITED(status)) {
+            return WEXITSTATUS(status);
+        }
+    }
 
-    // TODO 3: Parent process - Wait for child to complete
-    // Use waitpid(pid, &status, 0) to wait for the specific child
-    // Check if child exited normally with WIFEXITED(status)
-    // If yes, return the exit code with WEXITSTATUS(status)
-    // Otherwise return -1
-
-    return -1;  // This line should be replaced by your TODO 3 code
+    /* Return -1 if child terminated abnormally (e.g., crashed) */
+    return -1;
 }
