@@ -1,0 +1,1 @@
+/usr/bin/cc -Wl,--dependency-file=CMakeFiles/cus1163_lab04.dir/link.d CMakeFiles/cus1163_lab04.dir/main.c.o CMakeFiles/cus1163_lab04.dir/executor.c.o -o cus1163_lab04

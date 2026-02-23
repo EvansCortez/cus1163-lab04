@@ -1,0 +1,3 @@
+/home/evanscortez/cus1163-lab04/build/CMakeFiles/cus1163_lab04.dir
+/home/evanscortez/cus1163-lab04/build/CMakeFiles/edit_cache.dir
+/home/evanscortez/cus1163-lab04/build/CMakeFiles/rebuild_cache.dir
